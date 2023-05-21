@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Administrador</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Espaço de Tupla</h2>
+      <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#ambientes">Ambientes</a></li>
+        <li><a data-toggle="tab" href="#dispositivos">Dispositivos</a></li>
+        <li><a data-toggle="tab" href="#usuarios">Usuários</a></li>
+      </ul>
+      <div class="tab-content">
+        <div id="ambientes" class="tab-pane fade in active">
+          <h3>Gerenciamento de Ambientes</h3>
+          <br>
+          <form method="post" action="criarambiente">
+            <button type="submit" class="btn btn-default">Criar novo ambiente</button>
+          </form>
+          <br>
+          <ul class="list-group">
+            {% for ambiente in ambientes %}
+                <li class="list-group-item"> 
+                  <div class="card">
+                    <div class="card-header" id="headingTwo">
+                      <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#{{ambiente}}" aria-expanded="false" aria-controls="collapseTwo">
+                          {{ambiente}}
+                        </button>
+                      </h5>
+                    </div>
+                    <div id="{{ambiente}}" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                      <div class="card-body">
+                        <ul class="list-group">
+                          <select id="topicSelect" name="topicSelect" class="form-control form-select-sm" aria-label="Default select example">
+                            <option selected>Listagem de dispositivos</option>
+                              {% for dispAmb in dispAmbs[ambiente] %}
+                              <option name="topicNameAdd" >{{dispAmb}}</option>
+                              {% endfor %}
+                          </select>
+                          <br>
+                          <select id="topicSelect" name="topicSelect" class="form-control form-select-sm" aria-label="Default select example">
+                            <option selected>Listagem de usuários</option>
+                            {% for userAmb in userAmbs[ambiente] %}
+                              <option name="topicNameAdd" >{{userAmb}}</option>
+                            {% endfor %}
+                          </select>
+                          <br>
+                          <form id="message" method="post" action="/destruirambiente">
+                            <button type="submit" class="btn btn-primary" name="ambienteDestruido" value="{{ambiente}}">Destruir ambiente</button>
+                          </form> 
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              {% endfor %}
+          </ul>
+      </div>
+
+      <div id="dispositivos" class="tab-pane">
+        <h3>Gerenciamento de Dispositivos</h3>
+        <br>
+        <form method="post" action="/criardispositivos">
+          <button type="submit" class="btn btn-default">Criar novo dispositivo</button>
+        </form>
+        <br>
+        {% for dispositivo in dispositivos %}
+        <ul class="list-group">
+          <li class="list-group-item"> 
+            <div class="card">
+              <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                  <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#{{dispositivo}}" aria-expanded="false" aria-controls="collapseTwo">
+                    {{dispositivo}}
+                  </button>
+                </h5>
+              </div>
+              <div id="{{dispositivo}}" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                <div class="card-body">
+                  <ul class="list-group">
+                    <h5>Entrar em um ambiente</h5>
+                    <form id="message" method="post" action="/trocarambientedispositivo/{{dispositivo}}">
+                      <select id="ambiente" name="ambiente" class="form-control form-select-sm" aria-label="Default select example">
+                        <option selected>Escolha um novo ambiente</option>
+                          {% for ambiente in ambientes %}
+                          <option value="{{ambiente}}">{{ambiente}}</option>
+                          {% endfor %}
+                      </select>
+                      <br>
+                      <button type="submit" class="btn btn-primary" >Entrar</button>
+                    </form> 
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+        {% endfor %}
+      </div>  
+
+    <div id="usuarios" class="tab-pane">
+      <h3>Gerenciamento de Usuarios</h3>
+      <br>
+      <form method="post" action="/criarusuarios">
+        <button type="submit" class="btn btn-default">Criar novo usuarios</button>
+      </form>
+      <br>
+      {% for usuario in usuarios %}
+      <ul class="list-group">
+        <li class="list-group-item"> 
+          <div class="card">
+            <div class="card-header" id="headingTwo">
+              <h5 class="mb-0">
+                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#{{usuario}}" aria-expanded="false" aria-controls="collapseTwo">
+                  {{usuario}}
+                </button>
+              </h5>
+            </div>
+            <div id="{{usuario}}" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+              <div class="card-body">
+                <ul class="list-group">
+                  <h5>Alterar ambiente</h5>
+                  <form id="message" method="post" action="/trocarambienteusuario/{{usuario}}">
+                    <select id="ambienteUser" name="ambienteUser" class="form-control form-select-sm" aria-label="Default select example">
+                      <option selected>Escolha um novo ambiente</option>
+                      {% for ambiente in ambientes%}  
+                      <option value="{{ambiente}}" >{{ambiente}}</option>
+                      {% endfor %}
+                    </select>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Trocar ambiente</button>
+                  </form> 
+                </ul>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    {% endfor %}
+    </div>
+
+      </div>
+    </div>
+  </body>
+</html>
